@@ -8,27 +8,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
+    env:
+      CIBW_SKIP: cp27-*
 
     steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         name: Install Python
         with:
-          python-version: '3.7'
-
+          python-version: '3.8'
       - name: Install cibuildwheel
-        run: |
-          python -m pip install cibuildwheel==1.4.2
-      - name: Install Visual C++ for Python 2.7
-        if: startsWith(matrix.os, 'windows')
-        run: |
-          choco install vcpython27 -f -y
+        run: python -m pip install cibuildwheel==1.4.2
       - name: Build wheel
-        run: |
-          python -m cibuildwheel --output-dir wheelhouse
-      - uses: actions/upload-artifact@v1
+        run: python -m cibuildwheel --output-dir wheelhouse
+      - uses: actions/upload-artifact@v2
         with:
-          name: wheels
+          name: wheels-${{ matrix.os }}
           path: ./wheelhouse
