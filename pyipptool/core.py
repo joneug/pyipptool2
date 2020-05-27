@@ -149,7 +149,7 @@ class MetaAsyncShifter(type):
     """
     def __new__(cls, name, bases, attrs):
         klass = super(MetaAsyncShifter, cls).__new__(cls, name, bases, attrs)
-        if attrs.get('async'):
+        if attrs.get('doasync'):
             # ASYNC Wrapper
             for method_name in dir(bases[0]):
                 method = getattr(bases[0], method_name)
@@ -160,9 +160,8 @@ class MetaAsyncShifter(type):
         return klass
 
 
-class IPPToolWrapper(object):
-    __metaclass__ = MetaAsyncShifter
-    async = False
+class IPPToolWrapper(object, metaclass=MetaAsyncShifter):
+    doasync = False
 
     def __init__(self, config):
         self.config = config
@@ -862,7 +861,7 @@ class IPPToolWrapper(object):
 
 
 class AsyncIPPToolWrapper(IPPToolWrapper):
-    async = True
+    doasync = True
 
     def __init__(self, config, io_loop):
         self.config = config
